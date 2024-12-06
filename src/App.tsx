@@ -3,16 +3,54 @@
 // @ts-nocheck
 import { useState } from "react";
 import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
+import Select from 'react-select'
+import LineChart from "./LineChart";
 
 GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js`;
+
+const customStyles = {
+  control: (provided) => ({
+    ...provided,
+    backgroundColor: '#1a1a1a',
+    borderColor: 'transparent',
+    padding: 10,
+    borderRadius: 8,
+    color: 'white',
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: 'white',
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: '#1a1a1a',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected ? 'black' : '#1a1a1a',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#3e3e3e',
+    },
+  }),
+}
+
+const options = [
+  { value: 'acido', label: 'Acido' },
+  { value: 'amargo', label: 'Amargo' },
+  { value: 'dulce', label: 'Dulce' },
+  { value: 'salado', label: 'Salado' },
+  { value: 'umami', label: 'Umami' }
+]
 
 interface PagesText {
   [key: number]: string;
 }
 
 const App = () => {
-
+  const [page, setPage] = useState(1)
   const [pagesText, setPagesText] = useState<PagesText>({});
+  const [metrics, setMetrics] = useState<any>({});
 
   const extractTextFromPDF = async (file: File) => {
     const fileReader = new FileReader();
@@ -140,13 +178,60 @@ const App = () => {
   //   }
   // };
 
+  const nextPage = () => {
+    setPage(prevPage => prevPage + 1 >= Object.keys(pagesText).length ? prevPage : prevPage + 1)
+  }
+
+  const prevPage = () => {
+    setPage(prevPage => prevPage - 1 > 1 ? prevPage - 1 : 1)
+  }
+
+  const setTone = (tone: number) => {
+    setMetrics(prevMetrics => ({ ...prevMetrics, [page]: { ...prevMetrics[page], tone } }))
+  }
+
+  const setTaste = (taste: any) => {
+    setMetrics(prevMetrics => ({ ...prevMetrics, [page]: { ...prevMetrics[page], taste: taste.value } }))
+  }
+
   return (
-    <div>
-      <div>qweqwewqewqewqe</div>
-      <div>
-        {JSON.stringify(pagesText)}
-      </div>
+    <div className="container">
       <input type="file" accept="application/pdf" onChange={handleFileChange2} />
+      <div className="page-content">
+        {pagesText[page]}
+      </div>
+
+      <div className="options-container">
+        <div className="opt-section">
+          <div className="section-title">Ritmo</div>
+          <div className="tone-container">
+            <button className={metrics[page]?.tone == 1 ? 'selected' : null} onClick={() => setTone(1)}>{'/'}</button>
+            <button className={metrics[page]?.tone == 0 ? 'selected' : null} onClick={() => setTone(0)}>{'-'}</button>
+            <button className={metrics[page]?.tone == -1 ? 'selected' : null} onClick={() => setTone(-1)}>{'\\'}</button>
+          </div>
+        </div>
+
+        <div className="opt-section">
+          <div className="section-title">Página</div>
+          <div className="page-btn-container">
+            <button disabled={page === 1} onClick={prevPage}>{'<'}</button>
+            <div className="page">
+              {page}
+            </div>
+            <button disabled={page === Object.keys(pagesText).length} onClick={nextPage}>{'>'}</button>
+          </div>
+        </div>
+
+        <div className="opt-section">
+          <div className="section-title">Sabor</div>
+          <Select options={options} styles={customStyles} value={metrics[page]?.taste ? { value: metrics[page]?.taste, label: options.find(el => el.value == metrics[page]?.taste)?.label } : ''} onChange={setTaste} />
+        </div>
+
+      </div>
+
+      <LineChart dataX={[0, 322, 545, 234, 122]} dataY={[0, -1, 1, 1, 0]} />
+
+      {JSON.stringify(metrics)}
       {/* {totalPages > 0 && <p>Total Pages: {totalPages}</p>} */}
       {/* <div> */}
       {/*   {pdfPages.map((src: any, index: number) => ( */}
