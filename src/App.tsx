@@ -229,7 +229,7 @@ const App = () => {
 
       </div>
 
-      <LineChart dataX={[0, 322, 545, 234, 122]} dataY={[0, -1, 1, 1, 0]} />
+      <LineChart dataX={[0, 322, 55, 34, 122]} dataY={[0, -1, 1, 1, 0]} />
 
       {JSON.stringify(metrics)}
       {/* {totalPages > 0 && <p>Total Pages: {totalPages}</p>} */}

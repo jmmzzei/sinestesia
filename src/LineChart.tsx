@@ -1,5 +1,3 @@
-// src/components/LineChart.tsx
-
 import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
@@ -21,12 +19,20 @@ const LineChart: React.FC<LineChartProps> = ({
   useEffect(() => {
     if (!svgRef.current) return;
 
-    // Calcular los valores acumulados en el eje Y
+    // Calculate the accumulated Y values
     const accumulatedY = dataY.reduce((accumulated, current) => {
-      const lastValue = accumulated[accumulated.length - 1] || 0
-      accumulated.push(lastValue + current)
-      return accumulated
-    }, [] as number[])
+      const lastValue = accumulated[accumulated.length - 1] || 0;
+      accumulated.push(lastValue + current);
+      return accumulated;
+    }, [] as number[]);
+
+
+    // Calculate the accumulated X values (page numbers)
+    const accumulatedX = dataX.reduce((accumulated, current) => {
+      const lastValue = accumulated[accumulated.length - 1] || 0;
+      accumulated.push(lastValue + current);
+      return accumulated;
+    }, [] as number[]);
 
     // Clear the SVG content
     d3.select(svgRef.current).selectAll("*").remove();
@@ -38,14 +44,15 @@ const LineChart: React.FC<LineChartProps> = ({
 
     // Create scales
     const xScale = d3
-      .scalePoint()
-      .domain(dataX.map(String))
+      .scaleLinear()
+      // .domain([Math.min(...accumulatedX), dataX[dataX.length - 1]]) // Scale based on the accumulatedX values
+
+      .domain([Math.min(...accumulatedX), Math.max(...accumulatedX)]) // Scale based on the accumulatedX values
       .range([0, innerWidth]);
 
     const yScale = d3
       .scaleLinear()
       .domain([Math.min(...accumulatedY), Math.max(...accumulatedY)])
-      // .domain([d3.min(dataY) || 0, d3.max(dataY) || 0])
       .nice()
       .range([innerHeight, 0]);
 
@@ -65,15 +72,15 @@ const LineChart: React.FC<LineChartProps> = ({
       .attr("class", "axis-y");
 
     g.append("g")
-      .call(d3.axisBottom(xScale).tickFormat((d) => d.toString()))
+      .call(d3.axisBottom(xScale)) // Use xScale for bottom axis
       .attr("class", "axis-x")
       .attr("transform", `translate(0,${innerHeight})`);
 
     // Line generator
     const line = d3
       .line<number>()
-      .x((_, i) => xScale(dataX[i].toString()) || 0)
-      .y((d) => yScale(d) || 0);
+      .x((_, i) => xScale(accumulatedX[i])) // Use xScale to position points on the x-axis
+      .y((d) => yScale(d));
 
     // Append the line path
     g.append("path")
@@ -85,11 +92,11 @@ const LineChart: React.FC<LineChartProps> = ({
 
     // Add dots for each data point
     g.selectAll(".dot")
-      .datum(accumulatedY)
+      .data(accumulatedY) // Link each point to its corresponding value in accumulatedY
       .enter()
       .append("circle")
-      .attr("cx", (_, i) => xScale(dataX[i].toString()) || 0)
-      .attr("cy", (d) => yScale(d) || 0)
+      .attr("cx", (_, i) => xScale(accumulatedX[i])) // Position based on dataX
+      .attr("cy", (d) => yScale(d)) // Position based on accumulatedY
       .attr("r", 4)
       .attr("fill", "red");
   }, [dataX, dataY, width, height]);
