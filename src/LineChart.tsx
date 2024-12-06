@@ -86,8 +86,8 @@ const LineChart: React.FC<LineChartProps> = ({
     g.append("path")
       .datum(accumulatedY)
       .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 2)
+      .attr("stroke", "white")
+      .attr("stroke-width", 1)
       .attr("d", line);
 
     // Add dots for each data point
@@ -97,8 +97,8 @@ const LineChart: React.FC<LineChartProps> = ({
       .append("circle")
       .attr("cx", (_, i) => xScale(accumulatedX[i])) // Position based on dataX
       .attr("cy", (d) => yScale(d)) // Position based on accumulatedY
-      .attr("r", 4)
-      .attr("fill", "red");
+      .attr("r", 3)
+      .attr("fill", "white");
   }, [dataX, dataY, width, height]);
 
   return <svg ref={svgRef}></svg>;
