@@ -94,6 +94,15 @@ const LineChart: React.FC<LineChartProps> = ({
       .x((_, i) => xScale(accumulatedToneX[i]))
       .y((d) => yScale(d));
 
+  // Agregar etiqueta al eje X (por ejemplo, "Tiempo (s)")
+  g.append("text")
+    .attr("x", innerWidth / 2) // Centrar en el eje X
+    .attr("y", innerHeight + margin.bottom - 10) // Ajustar posición abajo
+    .attr("text-anchor", "middle") // Alinear el texto al centro
+    .style("fill", "white") // Color del texto
+    .style("font-size", "10") // Color del texto
+    .text("Porcentaje del texto"); // Texto de la unidad
+
     // Dibujar primera línea
     g.append("path")
       .datum(accumulatedY)
@@ -106,7 +115,7 @@ const LineChart: React.FC<LineChartProps> = ({
     g.append("path")
       .datum(accumulatedToneY)
       .attr("fill", "none")
-      .attr("stroke", "red") // Diferente color
+      .attr("stroke", "#d95645") // Diferente color
       .attr("stroke-width", 1.5)
       .attr("d", lineGeneratorTone);
 
@@ -128,7 +137,7 @@ const LineChart: React.FC<LineChartProps> = ({
       .attr("cx", (_, i) => xScale(accumulatedToneX[i]))
       .attr("cy", (d) => yScale(d))
       .attr("r", 3)
-      .attr("fill", "red");
+      .attr("fill", "#d95645");
 
     const legend = svg.append("g").attr("transform", `translate(60, 20)`);
 
@@ -154,13 +163,13 @@ const LineChart: React.FC<LineChartProps> = ({
       .attr("y", 0)
       .attr("width", 8)
       .attr("height", 8)
-      .attr("fill", "red");
+      .attr("fill", "#d95645");
 
     legend
       .append("text")
       .attr("x", 12)
       .attr("y", 7)
-      .attr("fill", "red")
+      .attr("fill", "#d95645")
       .attr("font-size", "8px")
       .text("Ritmo");
   }, [dataX, dataY, dataToneX, dataToneY, width, height]);

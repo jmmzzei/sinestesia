@@ -61,6 +61,7 @@ body {
 .title {
   margin: 0;
   font-size: 30px;
+  text-align: center;
 }
 
 .tone-container button.selected {
@@ -90,10 +91,18 @@ body {
   padding-top: 20px;
   position: fixed;
   bottom: 0;
-  /* border-top: 1px solid white; */
   box-shadow: 0 0 20px #00000060;
   width: 100%;
+  max-height: 102px;
   background: #242424;
+}
+
+@media (max-width: 1024px){
+.options-container{
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
 }
 .opt-section {
   display: flex;
@@ -182,6 +191,10 @@ body {
   flex-direction: row;
   gap: 5px;
   height: 56px;
+}
+
+.axis-y .tick {
+  display: none;
 }
 
 h1 {

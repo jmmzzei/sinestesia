@@ -228,7 +228,7 @@ const App = () => {
   if (!hasFileLoaded) {
     return <div>
       <div className="header">
-        <h1 className="title">Sinestesia Literaria - Autotaller</h1>
+        <h1 className="title">Sinestesia Literaria <span style={{ color: '#d95645' }}> Autotaller</span></h1>
       </div>
       <div className="container empty">
         <input type="file" accept="application/pdf" onChange={handleFileChange2} />
@@ -241,7 +241,7 @@ const App = () => {
   return (
     <div>
       <div className="header">
-        <h1 className="title">Sinestesia Literaria - Autotaller</h1>
+        <h1 className="title">Sinestesia Literaria <span style={{ color: '#d95645' }}> Autotaller</span></h1>
       </div>
       <div className="container">
         {
@@ -269,7 +269,10 @@ const App = () => {
               : pagesText[page]}
         </div>
 
-        <div className="options-container">
+      {
+        page > pagesQtty && hasFileLoaded
+        ? null
+        : <div className="options-container">
           <div className="opt-section">
             <div className="section-title">Ritmo</div>
             <div className="tone-container">
@@ -311,8 +314,7 @@ const App = () => {
             <Select menuPlacement="top" options={stationOptions} styles={customStyles} value={metrics[page]?.station ? { value: metrics[page]?.station, label: stationOptions.find(el => el.value == metrics[page]?.station)?.label } : ''} onChange={setStation} />
           </div>
         </div>
-
-
+      }
       </div>
     </div>
   );
