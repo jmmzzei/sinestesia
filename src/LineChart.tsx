@@ -4,6 +4,8 @@ import * as d3 from "d3";
 interface LineChartProps {
   dataX: number[];
   dataY: number[];
+  dataToneX: number[];
+  dataToneY: number[];
   width?: number;
   height?: number;
 }
@@ -11,6 +13,8 @@ interface LineChartProps {
 const LineChart: React.FC<LineChartProps> = ({
   dataX,
   dataY,
+  dataToneX,
+  dataToneY,
   width = 500,
   height = 300,
 }) => {
@@ -19,44 +23,49 @@ const LineChart: React.FC<LineChartProps> = ({
   useEffect(() => {
     if (!svgRef.current) return;
 
-    // Calculate the accumulated Y values
-    const accumulatedY = dataY.reduce((accumulated, current) => {
-      const lastValue = accumulated[accumulated.length - 1] || 0;
-      accumulated.push(lastValue + current);
-      return accumulated;
-    }, [] as number[]);
+    // Función para calcular valores acumulados
+    const accumulate = (data: number[]) =>
+      data.reduce(
+        (accumulated, current) => {
+          const lastValue = accumulated[accumulated.length - 1] || 0;
+          accumulated.push(lastValue + current);
+          return accumulated;
+        },
+        [] as number[]
+      )
 
+    const accumulatedY = accumulate(dataY);
+    const accumulatedX = accumulate(dataX);
+    const accumulatedToneY = accumulate(dataToneY);
+    const accumulatedToneX = accumulate(dataToneX);
 
-    // Calculate the accumulated X values (page numbers)
-    const accumulatedX = dataX.reduce((accumulated, current) => {
-      const lastValue = accumulated[accumulated.length - 1] || 0;
-      accumulated.push(lastValue + current);
-      return accumulated;
-    }, [] as number[]);
-
-    // Clear the SVG content
+    // Limpiar el SVG
     d3.select(svgRef.current).selectAll("*").remove();
 
-    // Create margins and dimensions
+    // Dimensiones y márgenes
     const margin = { top: 20, right: 30, bottom: 40, left: 50 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
-    // Create scales
+    // Crear escalas
     const xScale = d3
       .scaleLinear()
-      // .domain([Math.min(...accumulatedX), dataX[dataX.length - 1]]) // Scale based on the accumulatedX values
-
-      .domain([Math.min(...accumulatedX), Math.max(...accumulatedX)]) // Scale based on the accumulatedX values
+      .domain([
+        Math.min(...accumulatedX, ...accumulatedToneX),
+        Math.max(...accumulatedX, ...accumulatedToneX),
+      ])
       .range([0, innerWidth]);
 
     const yScale = d3
       .scaleLinear()
-      .domain([Math.min(...accumulatedY), Math.max(...accumulatedY)])
+      .domain([
+        Math.min(...accumulatedY, ...accumulatedToneY),
+        Math.max(...accumulatedY, ...accumulatedToneY),
+      ])
       .nice()
       .range([innerHeight, 0]);
 
-    // Create the SVG container
+    // Crear el contenedor SVG
     const svg = d3
       .select(svgRef.current)
       .attr("viewBox", `0 0 ${width} ${height}`)
@@ -66,40 +75,95 @@ const LineChart: React.FC<LineChartProps> = ({
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Add axes
-    g.append("g")
-      .call(d3.axisLeft(yScale))
-      .attr("class", "axis-y");
+    // Agregar ejes
+    g.append("g").call(d3.axisLeft(yScale)).attr("class", "axis-y");
 
     g.append("g")
-      .call(d3.axisBottom(xScale)) // Use xScale for bottom axis
+      .call(d3.axisBottom(xScale))
       .attr("class", "axis-x")
       .attr("transform", `translate(0,${innerHeight})`);
 
-    // Line generator
-    const line = d3
+    // Generador de líneas
+    const lineGenerator = d3
       .line<number>()
-      .x((_, i) => xScale(accumulatedX[i])) // Use xScale to position points on the x-axis
+      .x((_, i) => xScale(accumulatedX[i]))
       .y((d) => yScale(d));
 
-    // Append the line path
+    const lineGeneratorTone = d3
+      .line<number>()
+      .x((_, i) => xScale(accumulatedToneX[i]))
+      .y((d) => yScale(d));
+
+    // Dibujar primera línea
     g.append("path")
       .datum(accumulatedY)
       .attr("fill", "none")
       .attr("stroke", "white")
-      .attr("stroke-width", 1)
-      .attr("d", line);
+      .attr("stroke-width", 1.5)
+      .attr("d", lineGenerator);
 
-    // Add dots for each data point
+    // Dibujar segunda línea (dataTone)
+    g.append("path")
+      .datum(accumulatedToneY)
+      .attr("fill", "none")
+      .attr("stroke", "red") // Diferente color
+      .attr("stroke-width", 1.5)
+      .attr("d", lineGeneratorTone);
+
+    // Agregar puntos para la primera línea
     g.selectAll(".dot")
-      .data(accumulatedY) // Link each point to its corresponding value in accumulatedY
+      .data(accumulatedY)
       .enter()
       .append("circle")
-      .attr("cx", (_, i) => xScale(accumulatedX[i])) // Position based on dataX
-      .attr("cy", (d) => yScale(d)) // Position based on accumulatedY
+      .attr("cx", (_, i) => xScale(accumulatedX[i]))
+      .attr("cy", (d) => yScale(d))
       .attr("r", 3)
       .attr("fill", "white");
-  }, [dataX, dataY, width, height]);
+
+    // Agregar puntos para la segunda línea
+    g.selectAll(".dot-tone")
+      .data(accumulatedToneY)
+      .enter()
+      .append("circle")
+      .attr("cx", (_, i) => xScale(accumulatedToneX[i]))
+      .attr("cy", (d) => yScale(d))
+      .attr("r", 3)
+      .attr("fill", "red");
+
+    const legend = svg.append("g").attr("transform", `translate(60, 20)`);
+
+    legend
+      .append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", 8)
+      .attr("height", 8)
+      .attr("fill", "white");
+
+    legend
+      .append("text")
+      .attr("x", 12)
+      .attr("y", 6)
+      .attr("fill", "white")
+      .attr("font-size", "8px")
+      .text("Línea 1");
+
+    legend
+      .append("rect")
+      .attr("x", 0)
+      .attr("y", 20)
+      .attr("width", 8)
+      .attr("height", 8)
+      .attr("fill", "red");
+
+    legend
+      .append("text")
+      .attr("x", 12)
+      .attr("y", 26)
+      .attr("fill", "red")
+      .attr("font-size", "8px")
+      .text("Línea 2");
+  }, [dataX, dataY, dataToneX, dataToneY, width, height]);
 
   return <svg ref={svgRef}></svg>;
 };

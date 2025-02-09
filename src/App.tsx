@@ -213,6 +213,7 @@ const App = () => {
     setMetrics(prevMetrics => ({ ...prevMetrics, [page]: { ...prevMetrics[page], station: station.value } }))
   }
 
+  const breathingChartY = Object.values(metrics).map(item => item.breathing)
   const tonesChartY = Object.values(metrics).map(item => item.tone)
 
   const tonesChartX = num =>
@@ -227,7 +228,7 @@ const App = () => {
       <div className="page-content">
         {
           page > pagesQtty && pagesQtty > 0
-            ? <LineChart dataX={tonesChartX(pagesQtty)} dataY={tonesChartY} />
+            ? <LineChart dataX={tonesChartX(pagesQtty)} dataY={breathingChartY} dataToneX={tonesChartX(pagesQtty)} dataToneY={tonesChartY} />
             : pagesText[page]}
       </div>
 
