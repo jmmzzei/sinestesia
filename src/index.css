@@ -80,6 +80,7 @@ body {
 }
 
 .page-content {
+  width: 100%;
   max-width: 80vw;
   margin-bottom: 40px ;
   margin-top: 20px ;

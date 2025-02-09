@@ -40,7 +40,14 @@ const options = [
   { value: 'amargo', label: 'Amargo' },
   { value: 'dulce', label: 'Dulce' },
   { value: 'salado', label: 'Salado' },
-  { value: 'umami', label: 'Umami' }
+  { value: 'picante', label: 'Picante' }
+]
+
+const stationOptions = [
+  { value: 'primavera', label: 'Primavera' },
+  { value: 'verano', label: 'Verano' },
+  { value: 'otoño', label: 'Otoño' },
+  { value: 'invierno', label: 'Invieron' },
 ]
 
 interface PagesText {
@@ -178,8 +185,11 @@ const App = () => {
   //   }
   // };
 
+  const pagesQtty = Object.keys(pagesText).length
+
   const nextPage = () => {
-    setPage(prevPage => prevPage + 1 >= Object.keys(pagesText).length ? prevPage : prevPage + 1)
+    // setPage(prevPage => prevPage + 1 >= pagesQtty ? prevPage : prevPage + 1)
+    setPage(prevPage => prevPage + 1)
   }
 
   const prevPage = () => {
@@ -190,15 +200,35 @@ const App = () => {
     setMetrics(prevMetrics => ({ ...prevMetrics, [page]: { ...prevMetrics[page], tone } }))
   }
 
+
+  const setBreathing = (breathing: number) => {
+    setMetrics(prevMetrics => ({ ...prevMetrics, [page]: { ...prevMetrics[page], breathing } }))
+  }
+
   const setTaste = (taste: any) => {
     setMetrics(prevMetrics => ({ ...prevMetrics, [page]: { ...prevMetrics[page], taste: taste.value } }))
   }
+
+  const setStation = (station: any) => {
+    setMetrics(prevMetrics => ({ ...prevMetrics, [page]: { ...prevMetrics[page], station: station.value } }))
+  }
+
+  const tonesChartY = Object.values(metrics).map(item => item.tone)
+
+  const tonesChartX = num =>
+    Array.from({ length: num }, (_, i) => (i / (num - 1)) * 100)
+
+
+  console.log({ page, pagesQtty })
 
   return (
     <div className="container">
       <input type="file" accept="application/pdf" onChange={handleFileChange2} />
       <div className="page-content">
-        {pagesText[page]}
+        {
+          page > pagesQtty && pagesQtty > 0
+            ? <LineChart dataX={tonesChartX(pagesQtty)} dataY={tonesChartY} />
+            : pagesText[page]}
       </div>
 
       <div className="options-container">
@@ -212,13 +242,24 @@ const App = () => {
         </div>
 
         <div className="opt-section">
+          <div className="section-title">Respiración</div>
+          <div className="tone-container">
+            <button className={metrics[page]?.breathing == 1 ? 'selected' : null} onClick={() => setBreathing(1)}>{'Inhalación'}</button>
+            <button className={metrics[page]?.breathing == 0 ? 'selected' : null} onClick={() => setBreathing(0)}>{'Apnea'}</button>
+            <button className={metrics[page]?.breathing == -1 ? 'selected' : null} onClick={() => setBreathing(-1)}>{'Exhalación'}</button>
+          </div>
+        </div>
+
+        <div className="opt-section">
           <div className="section-title">Página</div>
           <div className="page-btn-container">
             <button disabled={page === 1} onClick={prevPage}>{'<'}</button>
             <div className="page">
               {page}
             </div>
-            <button disabled={page === Object.keys(pagesText).length} onClick={nextPage}>{'>'}</button>
+            <button
+              // disabled={page === Object.keys(pagesText).length + 1} 
+              onClick={nextPage}>{'>'}</button>
           </div>
         </div>
 
@@ -227,9 +268,12 @@ const App = () => {
           <Select options={options} styles={customStyles} value={metrics[page]?.taste ? { value: metrics[page]?.taste, label: options.find(el => el.value == metrics[page]?.taste)?.label } : ''} onChange={setTaste} />
         </div>
 
+        <div className="opt-section">
+          <div className="section-title">Estación</div>
+          <Select options={stationOptions} styles={customStyles} value={metrics[page]?.station ? { value: metrics[page]?.station, label: options.find(el => el.value == metrics[page]?.station)?.label } : ''} onChange={setStation} />
+        </div>
       </div>
 
-      <LineChart dataX={[0, 322, 55, 34, 122]} dataY={[0, -1, 1, 0, 0]} />
 
       {JSON.stringify(metrics)}
       {/* {totalPages > 0 && <p>Total Pages: {totalPages}</p>} */}
