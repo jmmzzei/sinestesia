@@ -15,8 +15,8 @@ const LineChart: React.FC<LineChartProps> = ({
   dataY,
   dataToneX,
   dataToneY,
-  width = 500,
-  height = 300,
+  width = 800,
+  height = 180,
 }) => {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
@@ -135,7 +135,7 @@ const LineChart: React.FC<LineChartProps> = ({
     legend
       .append("rect")
       .attr("x", 0)
-      .attr("y", 0)
+      .attr("y", 12)
       .attr("width", 8)
       .attr("height", 8)
       .attr("fill", "white");
@@ -143,15 +143,15 @@ const LineChart: React.FC<LineChartProps> = ({
     legend
       .append("text")
       .attr("x", 12)
-      .attr("y", 6)
+      .attr("y", 19)
       .attr("fill", "white")
       .attr("font-size", "8px")
-      .text("Línea 1");
+      .text("Respiración");
 
     legend
       .append("rect")
       .attr("x", 0)
-      .attr("y", 20)
+      .attr("y", 0)
       .attr("width", 8)
       .attr("height", 8)
       .attr("fill", "red");
@@ -159,10 +159,10 @@ const LineChart: React.FC<LineChartProps> = ({
     legend
       .append("text")
       .attr("x", 12)
-      .attr("y", 26)
+      .attr("y", 7)
       .attr("fill", "red")
       .attr("font-size", "8px")
-      .text("Línea 2");
+      .text("Ritmo");
   }, [dataX, dataY, dataToneX, dataToneY, width, height]);
 
   return <svg ref={svgRef}></svg>;

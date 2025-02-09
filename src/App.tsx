@@ -47,7 +47,7 @@ const stationOptions = [
   { value: 'primavera', label: 'Primavera' },
   { value: 'verano', label: 'Verano' },
   { value: 'otoño', label: 'Otoño' },
-  { value: 'invierno', label: 'Invieron' },
+  { value: 'invierno', label: 'Invierno' },
 ]
 
 interface PagesText {
@@ -221,68 +221,99 @@ const App = () => {
 
 
   console.log({ page, pagesQtty })
+  console.log(metrics)
+
+  const hasFileLoaded = pagesQtty > 0
+
+  if (!hasFileLoaded) {
+    return <div>
+      <div className="header">
+        <h1 className="title">Sinestesia Literaria - Autotaller</h1>
+      </div>
+      <div className="container empty">
+        <input type="file" accept="application/pdf" onChange={handleFileChange2} />
+      </div>
+    </div>
+  }
+
+  const x = new Array(pagesQtty).fill(100 / (pagesQtty - 1)).map((e, i) => i === 0 ? 0 : e)
 
   return (
-    <div className="container">
-      <input type="file" accept="application/pdf" onChange={handleFileChange2} />
-      <div className="page-content">
+    <div>
+      <div className="header">
+        <h1 className="title">Sinestesia Literaria - Autotaller</h1>
+      </div>
+      <div className="container">
         {
-          page > pagesQtty && pagesQtty > 0
-            ? <LineChart dataX={tonesChartX(pagesQtty)} dataY={breathingChartY} dataToneX={tonesChartX(pagesQtty)} dataToneY={tonesChartY} />
-            : pagesText[page]}
-      </div>
+          hasFileLoaded ? <button onClick={() => window.location.reload()}>Recargar</button> :
+            <input type="file" accept="application/pdf" onChange={handleFileChange2} />
+        }
+        <div className="page-content">
+          {
+            page > pagesQtty && hasFileLoaded
+              ? <div>
+                <LineChart dataX={x} dataY={breathingChartY} dataToneX={x} dataToneY={tonesChartY} />
+                <div>
+                  <div>Sabores</div>
+                  <div className="result-list">
+                    {Object.values(metrics).map(item => item.taste).map((el) => <span className="result-list-item" style={{ width: 100 / pagesQtty + "%", display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{el}</span>)}
+                  </div>
 
-      <div className="options-container">
-        <div className="opt-section">
-          <div className="section-title">Ritmo</div>
-          <div className="tone-container">
-            <button className={metrics[page]?.tone == 1 ? 'selected' : null} onClick={() => setTone(1)}>{'/'}</button>
-            <button className={metrics[page]?.tone == 0 ? 'selected' : null} onClick={() => setTone(0)}>{'-'}</button>
-            <button className={metrics[page]?.tone == -1 ? 'selected' : null} onClick={() => setTone(-1)}>{'\\'}</button>
-          </div>
+                  <div>Estaciones</div>
+                  <div className="result-list">
+                    {Object.values(metrics).map(item => item.station).map((el) => <span className="result-list-item" style={{ width: 100 / pagesQtty + "%", display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{el}</span>)}
+                  </div>
+                </div>
+
+              </div>
+              : pagesText[page]}
         </div>
 
-        <div className="opt-section">
-          <div className="section-title">Respiración</div>
-          <div className="tone-container">
-            <button className={metrics[page]?.breathing == 1 ? 'selected' : null} onClick={() => setBreathing(1)}>{'Inhalación'}</button>
-            <button className={metrics[page]?.breathing == 0 ? 'selected' : null} onClick={() => setBreathing(0)}>{'Apnea'}</button>
-            <button className={metrics[page]?.breathing == -1 ? 'selected' : null} onClick={() => setBreathing(-1)}>{'Exhalación'}</button>
-          </div>
-        </div>
-
-        <div className="opt-section">
-          <div className="section-title">Página</div>
-          <div className="page-btn-container">
-            <button disabled={page === 1} onClick={prevPage}>{'<'}</button>
-            <div className="page">
-              {page}
+        <div className="options-container">
+          <div className="opt-section">
+            <div className="section-title">Ritmo</div>
+            <div className="tone-container">
+              <button className={metrics[page]?.tone == 1 ? 'selected' : null} onClick={() => setTone(1)}>{'/'}</button>
+              <button className={metrics[page]?.tone == 0 ? 'selected' : null} onClick={() => setTone(0)}>{'-'}</button>
+              <button className={metrics[page]?.tone == -1 ? 'selected' : null} onClick={() => setTone(-1)}>{'\\'}</button>
             </div>
-            <button
-              // disabled={page === Object.keys(pagesText).length + 1} 
-              onClick={nextPage}>{'>'}</button>
+          </div>
+
+          <div className="opt-section">
+            <div className="section-title">Respiración</div>
+            <div className="tone-container">
+              <button className={metrics[page]?.breathing == 1 ? 'selected' : null} onClick={() => setBreathing(1)}>{'Inhalación'}</button>
+              <button className={metrics[page]?.breathing == 0 ? 'selected' : null} onClick={() => setBreathing(0)}>{'Apnea'}</button>
+              <button className={metrics[page]?.breathing == -1 ? 'selected' : null} onClick={() => setBreathing(-1)}>{'Exhalación'}</button>
+            </div>
+          </div>
+
+          <div className="opt-section">
+            <div className="section-title">Página</div>
+            <div className="page-btn-container">
+              <button disabled={page === 1} onClick={prevPage}>{'<'}</button>
+              <div className="page">
+                {page}
+              </div>
+              <button
+                disabled={page === Object.keys(pagesText).length + 1}
+                onClick={nextPage}>{'>'}</button>
+            </div>
+          </div>
+
+          <div className="opt-section">
+            <div className="section-title">Sabor</div>
+            <Select menuPlacement="top" options={options} styles={customStyles} value={metrics[page]?.taste ? { value: metrics[page]?.taste, label: options.find(el => el.value == metrics[page]?.taste)?.label } : ''} onChange={setTaste} />
+          </div>
+
+          <div className="opt-section">
+            <div className="section-title">Estación</div>
+            <Select menuPlacement="top" options={stationOptions} styles={customStyles} value={metrics[page]?.station ? { value: metrics[page]?.station, label: stationOptions.find(el => el.value == metrics[page]?.station)?.label } : ''} onChange={setStation} />
           </div>
         </div>
 
-        <div className="opt-section">
-          <div className="section-title">Sabor</div>
-          <Select options={options} styles={customStyles} value={metrics[page]?.taste ? { value: metrics[page]?.taste, label: options.find(el => el.value == metrics[page]?.taste)?.label } : ''} onChange={setTaste} />
-        </div>
 
-        <div className="opt-section">
-          <div className="section-title">Estación</div>
-          <Select options={stationOptions} styles={customStyles} value={metrics[page]?.station ? { value: metrics[page]?.station, label: options.find(el => el.value == metrics[page]?.station)?.label } : ''} onChange={setStation} />
-        </div>
       </div>
-
-
-      {JSON.stringify(metrics)}
-      {/* {totalPages > 0 && <p>Total Pages: {totalPages}</p>} */}
-      {/* <div> */}
-      {/*   {pdfPages.map((src: any, index: number) => ( */}
-      {/*     <img key={index} src={src} alt={`Page ${index + 1}`} /> */}
-      {/*   ))} */}
-      {/* </div> */}
     </div>
   );
 };
