@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #111111;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -55,7 +55,7 @@ body {
   display:flex;
   align-items:center;
   justify-content: center;
-  box-shadow: 0 0 20px #00000060;
+  box-shadow: 0 0 20px #00000095;
 } 
 
 .title {
@@ -87,14 +87,14 @@ body {
   align-items: center;
   gap: 30px;
   flex-direction: row;
-  padding-bottom: 30px;
+  padding-bottom: 50px;
   padding-top: 20px;
   position: fixed;
   bottom: 0;
-  box-shadow: 0 0 20px #00000060;
+  box-shadow: 0 0 20px #00000095;
   width: 100%;
   max-height: 102px;
-  background: #242424;
+  background: #111111;
 }
 
 @media (max-width: 1024px){
@@ -120,12 +120,11 @@ body {
   width: 100%;
   max-width: 80vw;
   margin-top: 20px ;
-  box-shadow: 0 0 20px #00000060;
+  box-shadow: 0 0 20px #00000095;
   border-radius: 14px;
   padding: 40px;
   max-height: 450px;
   overflow: auto;
-
 }
 
 
@@ -136,7 +135,7 @@ body {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #242424;
+  background: #111111;
 }
 
 /* Handle */
@@ -157,6 +156,7 @@ body {
   display:flex;
   margin-top: 10px;
   margin-bottom: 20px;
+  overflow: hidden;
 }
 
 .result-list-item {
@@ -164,6 +164,11 @@ body {
   align-items:center;
   justify-content: center;
   border-right: 1px solid white;
+  transition: 0.4s all;
+}
+
+.result-list-item.zoom:hover{
+  width: 20% !important;
 }
 
 .result-list-item:last-child {
@@ -177,13 +182,24 @@ body {
   height: 56px;
 }
 
-.page-btn-container button{
+.page-btn-container button {
   border-radius: 50%;
-  width: 46px;
-  height: 46px;
-  font-size: 20px;
+  width: 50px;
+  height: 50px;
+  font-size: 26px;
   font-weight: 600;
   padding: 0;
+  background: rgb(217, 86, 69);
+  border:none;
+}
+
+.page-btn-container button:hover {
+  opacity: 0.8;
+}
+
+.page-btn-container button:disabled {
+  opacity: 0.5;
+  color: white;
 }
 
 .tone-container {
@@ -191,6 +207,27 @@ body {
   flex-direction: row;
   gap: 5px;
   height: 56px;
+}
+
+.book-ref {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.book-ref a {
+  color: rgb(217, 86, 69);
+}
+
+@media (max-width: 1024px){
+  .book-ref {
+    position: static;
+  }
 }
 
 .axis-y .tick {

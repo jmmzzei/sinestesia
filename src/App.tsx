@@ -44,10 +44,10 @@ const options = [
 ]
 
 const stationOptions = [
-  { value: 'primavera', label: 'Primavera' },
-  { value: 'verano', label: 'Verano' },
-  { value: 'otoño', label: 'Otoño' },
-  { value: 'invierno', label: 'Invierno' },
+  { value: 'primavera', label: 'Primavera', color: '#519d62' },
+  { value: 'verano', label: 'Verano', color: '#6495ed' },
+  { value: 'otoño', label: 'Otoño', color: '#8b4513' },
+  { value: 'invierno', label: 'Invierno', color: '#383a3d' },
 ]
 
 interface PagesText {
@@ -228,7 +228,7 @@ const App = () => {
   if (!hasFileLoaded) {
     return <div>
       <div className="header">
-        <h1 className="title">Sinestesia Literaria <span style={{ color: '#d95645' }}> Autotaller</span></h1>
+        <h1 className="title">Sinestesia Literaria <span style={{ color: '#d95645' }}> (Autoedición Lúdica)</span></h1>
       </div>
       <div className="container empty">
         <input type="file" accept="application/pdf" onChange={handleFileChange2} />
@@ -261,7 +261,7 @@ const App = () => {
 
                   <div>Estaciones</div>
                   <div className="result-list">
-                    {Object.values(metrics).map(item => item.station).map((el) => <span className="result-list-item" style={{ width: 100 / pagesQtty + "%", display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{el}</span>)}
+                    {Object.values(metrics).map(item => item.station).map((el) => <span className={"result-list-item " + (100 / pagesQtty < 20 ? 'zoom' : '')} style={{ width: 100 / pagesQtty + "%", backgroundColor: stationOptions.find(e => e.value === el)?.color }}>{el}</span>)}
                   </div>
                 </div>
 
@@ -269,52 +269,55 @@ const App = () => {
               : pagesText[page]}
         </div>
 
-      {
-        page > pagesQtty && hasFileLoaded
-        ? null
-        : <div className="options-container">
-          <div className="opt-section">
-            <div className="section-title">Ritmo</div>
-            <div className="tone-container">
-              <button className={metrics[page]?.tone == 1 ? 'selected' : null} onClick={() => setTone(1)}>{'/'}</button>
-              <button className={metrics[page]?.tone == 0 ? 'selected' : null} onClick={() => setTone(0)}>{'-'}</button>
-              <button className={metrics[page]?.tone == -1 ? 'selected' : null} onClick={() => setTone(-1)}>{'\\'}</button>
-            </div>
-          </div>
-
-          <div className="opt-section">
-            <div className="section-title">Respiración</div>
-            <div className="tone-container">
-              <button className={metrics[page]?.breathing == 1 ? 'selected' : null} onClick={() => setBreathing(1)}>{'Inhalación'}</button>
-              <button className={metrics[page]?.breathing == 0 ? 'selected' : null} onClick={() => setBreathing(0)}>{'Apnea'}</button>
-              <button className={metrics[page]?.breathing == -1 ? 'selected' : null} onClick={() => setBreathing(-1)}>{'Exhalación'}</button>
-            </div>
-          </div>
-
-          <div className="opt-section">
-            <div className="section-title">Página</div>
-            <div className="page-btn-container">
-              <button disabled={page === 1} onClick={prevPage}>{'<'}</button>
-              <div className="page">
-                {page}
+        {
+          page > pagesQtty && hasFileLoaded
+            ? null
+            : <div className="options-container">
+              <div className="opt-section">
+                <div className="section-title">Orografía</div>
+                <div className="tone-container">
+                  <button className={metrics[page]?.tone == 1 ? 'selected' : null} onClick={() => setTone(1)}>{'/'}</button>
+                  <button className={metrics[page]?.tone == 0 ? 'selected' : null} onClick={() => setTone(0)}>{'-'}</button>
+                  <button className={metrics[page]?.tone == -1 ? 'selected' : null} onClick={() => setTone(-1)}>{'\\'}</button>
+                </div>
               </div>
-              <button
-                disabled={page === Object.keys(pagesText).length + 1}
-                onClick={nextPage}>{'>'}</button>
+
+              <div className="opt-section">
+                <div className="section-title">Respiración</div>
+                <div className="tone-container">
+                  <button className={metrics[page]?.breathing == 1 ? 'selected' : null} onClick={() => setBreathing(1)}>{'Inhalación'}</button>
+                  <button className={metrics[page]?.breathing == 0 ? 'selected' : null} onClick={() => setBreathing(0)}>{'Apnea'}</button>
+                  <button className={metrics[page]?.breathing == -1 ? 'selected' : null} onClick={() => setBreathing(-1)}>{'Exhalación'}</button>
+                </div>
+              </div>
+
+
+              <div className="opt-section">
+                <div className="section-title">Sabor</div>
+                <Select menuPlacement="top" options={options} styles={customStyles} value={metrics[page]?.taste ? { value: metrics[page]?.taste, label: options.find(el => el.value == metrics[page]?.taste)?.label } : ''} onChange={setTaste} />
+              </div>
+
+              <div className="opt-section">
+                <div className="section-title">Estación</div>
+                <Select menuPlacement="top" options={stationOptions} styles={customStyles} value={metrics[page]?.station ? { value: metrics[page]?.station, label: stationOptions.find(el => el.value == metrics[page]?.station)?.label } : ''} onChange={setStation} />
+              </div>
+
+              <div className="opt-section">
+                <div className="section-title">Página</div>
+                <div className="page-btn-container">
+                  <button disabled={page === 1} onClick={prevPage}>{'<'}</button>
+                  <div className="page">
+                    {page}
+                  </div>
+                  <button
+                    disabled={page === Object.keys(pagesText).length + 1}
+                    onClick={nextPage}>{'>'}</button>
+                </div>
+              </div>
+
+              <div className="book-ref"><a href="https://vagusediciones.com/producto/sinestesia-literaria/">Ir al libro</a></div>
             </div>
-          </div>
-
-          <div className="opt-section">
-            <div className="section-title">Sabor</div>
-            <Select menuPlacement="top" options={options} styles={customStyles} value={metrics[page]?.taste ? { value: metrics[page]?.taste, label: options.find(el => el.value == metrics[page]?.taste)?.label } : ''} onChange={setTaste} />
-          </div>
-
-          <div className="opt-section">
-            <div className="section-title">Estación</div>
-            <Select menuPlacement="top" options={stationOptions} styles={customStyles} value={metrics[page]?.station ? { value: metrics[page]?.station, label: stationOptions.find(el => el.value == metrics[page]?.station)?.label } : ''} onChange={setStation} />
-          </div>
-        </div>
-      }
+        }
       </div>
     </div>
   );
