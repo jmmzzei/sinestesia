@@ -88,7 +88,6 @@ const App = () => {
       }
 
       // Set the extracted text by page
-      console.log(textByPage);
       setPagesText(textByPage);
     };
 
@@ -104,103 +103,29 @@ const App = () => {
     }
   };
 
-
-  // const handleFileChange = async (event: any) => {
-  //   const file = event?.target.files[0];
-  //   console.log('rqweqweqweqwe')
-  //   console.log(file)
-  //
-  //   if (file && file.type === "application/pdf") {
-  //     console.log(1)
-  //     const fileReader = new FileReader();
-  //     const textByPage = {};
-  //
-  //     fileReader.onload = async (e) => {
-  //       const t = e?.target?.result as unknown as number
-  //
-  //       console.log(2)
-  //       if (!t) {
-  //         return
-  //       }
-  //       console.log(3)
-  //
-  //       const typedArray = new Uint8Array(t);
-  //
-  //       // Load the PDF document
-  //       const pdf = await getDocument(typedArray).promise;
-  //       console.log(pdf)
-  //       setTotalPages(pdf.numPages);
-  //       let fullText = "";
-  //
-  //
-  //       console.log(4)
-  //       // Render each page
-  //       const pages = [];
-  //       for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-  //         const page = await pdf.getPage(pageNum);
-  //         const textContent = await page.getTextContent();
-  //         const textItems = textContent.items;
-  //
-  //         // Concatenate the text from the page
-  //         textItems.forEach((item: any) => {
-  //           fullText += item?.str + " ";
-  //         });
-  //
-  //         // eslint-disable-next-line
-  //         // @ts-ignore
-  //         textByPage[pageNum] = fullText;
-  //
-  //         const viewport = page.getViewport({ scale: 1.5 });
-  //         console.log(5)
-  //
-  //         const canvas = document.createElement("canvas");
-  //         const context = canvas.getContext("2d");
-  //         canvas.width = viewport.width;
-  //         canvas.height = viewport.height;
-  //
-  //         console.log(6)
-  //         if (!context) return
-  //
-  //         console.log(7)
-  //         await page.render({
-  //           canvasContext: context,
-  //           viewport: viewport,
-  //         }).promise;
-  //
-  //         console.log(8)
-  //         pages.push(canvas.toDataURL()); // Convert canvas to a data URL
-  //       }
-  //       console.log(textByPage)
-  //
-  //       setText(fullText)
-  //
-  //       console.log(9)
-  //       setPdfPages(pages); // Store rendered pages as images
-  //     };
-  //
-  //     console.log(10)
-  //     fileReader.readAsArrayBuffer(file);
-  //   } else {
-  //     alert("Please upload a valid PDF file.");
-  //     console.log(11)
-  //   }
-  // };
-
   const pagesQtty = Object.keys(pagesText).length
 
+  const [error, setError] = useState('')
+
+
   const nextPage = () => {
-    // setPage(prevPage => prevPage + 1 >= pagesQtty ? prevPage : prevPage + 1)
-    setPage(prevPage => prevPage + 1)
+    if ((metrics[page]?.tone === 0 || metrics[page]?.tone) && (metrics[page]?.breathing === 0 || metrics[page]?.breathing)) {
+      setPage(prevPage => prevPage + 1)
+
+      setError('')
+    } else {
+      setError('Debe estar seleccionados para continuar.')
+    }
   }
 
   const prevPage = () => {
     setPage(prevPage => prevPage - 1 > 1 ? prevPage - 1 : 1)
+    setError('')
   }
 
   const setTone = (tone: number) => {
     setMetrics(prevMetrics => ({ ...prevMetrics, [page]: { ...prevMetrics[page], tone } }))
   }
-
 
   const setBreathing = (breathing: number) => {
     setMetrics(prevMetrics => ({ ...prevMetrics, [page]: { ...prevMetrics[page], breathing } }))
@@ -214,18 +139,6 @@ const App = () => {
     setMetrics(prevMetrics => ({ ...prevMetrics, [page]: { ...prevMetrics[page], station: station.value } }))
   }
 
-  const breathingChartY = Object.values(metrics).map(item => item.breathing)
-  const tonesChartY = Object.values(metrics).map(item => item.tone)
-
-  // const tonesChartX = num =>
-  //   Array.from({ length: num }, (_, i) => (i / (num - 1)) * 100)
-
-
-  console.log({ page, pagesQtty })
-  console.log(metrics)
-
-  const hasFileLoaded = pagesQtty > 0
-
   const captureAndSave = async () => {
     const element = document.getElementById('results')
     if (!element) return
@@ -233,13 +146,21 @@ const App = () => {
     const canvas = await html2canvas(element, { useCORS: true })
     const imgData = canvas.toDataURL('image/jpeg', 0.9)
 
-    console.log(imgData)
 
     const link = document.createElement('a')
     link.href = imgData
     link.download = 'sinestesia-literaria.jpg'
     link.click()
   }
+
+  const breathingChartY = [0, ...Object.values(metrics).map(item => item.breathing)]
+  const tonesChartY = [0, ...Object.values(metrics).map(item => item.tone)]
+
+  // const tonesChartX = num =>
+  //   Array.from({ length: num }, (_, i) => (i / (num - 1)) * 100)
+
+
+  const hasFileLoaded = pagesQtty > 0
 
   if (!hasFileLoaded) {
     return <div>
@@ -252,7 +173,8 @@ const App = () => {
     </div>
   }
 
-  const x = new Array(pagesQtty).fill(100 / (pagesQtty - 1)).map((e, i) => i === 0 ? 0 : e)
+  const x = [0, ...new Array(pagesQtty).fill(100 / (pagesQtty))]
+
 
   return (
     <div>
@@ -296,8 +218,10 @@ const App = () => {
                 <div className="tone-container">
                   <button className={metrics[page]?.tone == 1 ? 'selected' : null} onClick={() => setTone(1)}>{'/'}</button>
                   <button className={metrics[page]?.tone == 0 ? 'selected' : null} onClick={() => setTone(0)}>{'-'}</button>
+                  <button className={metrics[page]?.tone == 3 ? 'selected' : null} onClick={() => setTone(3)}>{'~'}</button>
                   <button className={metrics[page]?.tone == -1 ? 'selected' : null} onClick={() => setTone(-1)}>{'\\'}</button>
                 </div>
+                <div className="page-error" >{error}</div>
               </div>
 
               <div className="opt-section">
@@ -307,8 +231,8 @@ const App = () => {
                   <button className={metrics[page]?.breathing == 0 ? 'selected' : null} onClick={() => setBreathing(0)}>{'Apnea'}</button>
                   <button className={metrics[page]?.breathing == -1 ? 'selected' : null} onClick={() => setBreathing(-1)}>{'Exhalación'}</button>
                 </div>
+                <div className="page-error" >{error}</div>
               </div>
-
 
               <div className="opt-section">
                 <div className="section-title">Sabor</div>
@@ -333,7 +257,7 @@ const App = () => {
                 </div>
               </div>
 
-              <div className="book-ref"><a href="https://vagusediciones.com/producto/sinestesia-literaria/">Ir al libro</a></div>
+              <div className="book-ref"><a href="https://vagusediciones.com/producto/sinestesia-literaria/">Ir al libro &#8658;</a></div>
             </div>
         }
       </div>
