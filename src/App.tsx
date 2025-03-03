@@ -5,6 +5,7 @@ import { useState } from "react";
 import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
 import Select from 'react-select'
 import LineChart from "./LineChart";
+import html2canvas from 'html2canvas'
 
 GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js`;
 
@@ -216,14 +217,29 @@ const App = () => {
   const breathingChartY = Object.values(metrics).map(item => item.breathing)
   const tonesChartY = Object.values(metrics).map(item => item.tone)
 
-  const tonesChartX = num =>
-    Array.from({ length: num }, (_, i) => (i / (num - 1)) * 100)
+  // const tonesChartX = num =>
+  //   Array.from({ length: num }, (_, i) => (i / (num - 1)) * 100)
 
 
   console.log({ page, pagesQtty })
   console.log(metrics)
 
   const hasFileLoaded = pagesQtty > 0
+
+  const captureAndSave = async () => {
+    const element = document.getElementById('results')
+    if (!element) return
+
+    const canvas = await html2canvas(element, { useCORS: true })
+    const imgData = canvas.toDataURL('image/jpeg', 0.9)
+
+    console.log(imgData)
+
+    const link = document.createElement('a')
+    link.href = imgData
+    link.download = 'sinestesia-literaria.jpg'
+    link.click()
+  }
 
   if (!hasFileLoaded) {
     return <div>
@@ -241,19 +257,19 @@ const App = () => {
   return (
     <div>
       <div className="header">
-        <h1 className="title">Sinestesia Literaria <span style={{ color: '#d95645' }}> Autotaller</span></h1>
+        <h1 className="title">Sinestesia Literaria <span style={{ color: '#d95645' }}> (Autoedición Lúdica)</span></h1>
       </div>
       <div className="container">
         {
           hasFileLoaded ? <button onClick={() => window.location.reload()}>Recargar</button> :
             <input type="file" accept="application/pdf" onChange={handleFileChange2} />
         }
-        <div className="page-content">
+        <div className="page-content" >
           {
             page > pagesQtty && hasFileLoaded
-              ? <div>
+              ? <div><div id="results">
                 <LineChart dataX={x} dataY={breathingChartY} dataToneX={x} dataToneY={tonesChartY} />
-                <div>
+                <div className="result-list-container">
                   <div>Sabores</div>
                   <div className="result-list">
                     {Object.values(metrics).map(item => item.taste).map((el) => <span className="result-list-item" style={{ width: 100 / pagesQtty + "%", display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{el}</span>)}
@@ -264,7 +280,9 @@ const App = () => {
                     {Object.values(metrics).map(item => item.station).map((el) => <span className={"result-list-item " + (100 / pagesQtty < 20 ? 'zoom' : '')} style={{ width: 100 / pagesQtty + "%", backgroundColor: stationOptions.find(e => e.value === el)?.color }}>{el}</span>)}
                   </div>
                 </div>
+              </div>
 
+                <button className="save-button" onClick={captureAndSave}>Guardar como imagen</button>
               </div>
               : pagesText[page]}
         </div>
