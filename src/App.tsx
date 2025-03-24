@@ -170,7 +170,7 @@ const App = () => {
   if (!hasFileLoaded) {
     return <div>
       <div className="header">
-        <h1 className="title">Sinestesia Literaria <span style={{ color: '#d95645' }}> (Autoedición Lúdica)</span></h1>
+        <h1 className="title">Sinestesia Literaria <span className="very-red"> (Autoedición Lúdica)</span></h1>
       </div>
       <div className="container empty">
         <input type="file" accept="application/pdf" onChange={handleFileChange2} />
@@ -183,11 +183,11 @@ const App = () => {
   return (
     <div>
       <div className="header">
-        <h1 className="title">Sinestesia Literaria <span style={{ color: '#d95645' }}> (Autoedición Lúdica)</span></h1>
+        <h1 className="title">Sinestesia Literaria <span className="very-red"> (Autoedición Lúdica)</span></h1>
       </div>
       <div className="container">
         {
-          hasFileLoaded ? <button onClick={() => window.location.reload()}>Recargar</button> :
+          hasFileLoaded ? <button className="very-btn" onClick={() => window.location.reload()}>Recargar</button> :
             <input type="file" accept="application/pdf" onChange={handleFileChange2} />
         }
         <div className="page-content" >
