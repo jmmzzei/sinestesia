@@ -104,14 +104,6 @@ const LineChart: React.FC<LineChartProps> = ({
     // Split data into segments
     const toneSegments2 = splitIntoSegments2(accumulatedToneX, accumulatedToneY);
 
-    // Generador de líneas
-    const lineGenerator = d3
-      .line<number>()
-      .defined((_, i) => dataY[i + 1] !== 3) // Ignore segment if the next value is 3
-      .x((_, i) => xScale(accumulatedX[i]))
-      .curve(d3.curveCatmullRom.alpha(0.5))
-      .y((d) => yScale(d));
-
     // Agregar etiqueta al eje X (por ejemplo, "Tiempo (s)")
     g.append("text")
       .attr("x", innerWidth / 2) // Centrar en el eje X
