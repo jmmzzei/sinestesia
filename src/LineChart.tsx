@@ -2,8 +2,6 @@ import React, { useRef, useEffect } from "react";
 import * as d3 from "d3";
 
 interface LineChartProps {
-  dataX: number[];
-  dataY: number[];
   dataToneX: number[];
   dataToneY: number[];
   width?: number;
@@ -11,8 +9,6 @@ interface LineChartProps {
 }
 
 const LineChart: React.FC<LineChartProps> = ({
-  dataX,
-  dataY,
   dataToneX,
   dataToneY,
   width = 800,
@@ -38,8 +34,6 @@ const LineChart: React.FC<LineChartProps> = ({
         [] as { value: number, t: boolean }[]
       )
 
-    const accumulatedY = accumulate(dataY).map(e => e.value);
-    const accumulatedX = accumulate(dataX).map(e => e.value);
     const accumulatedToneY = accumulate(dataToneY);
     const accumulatedToneX = accumulate(dataToneX).map(e => e.value);
 
@@ -55,16 +49,16 @@ const LineChart: React.FC<LineChartProps> = ({
     const xScale = d3
       .scaleLinear()
       .domain([
-        Math.min(...accumulatedX, ...accumulatedToneX),
-        Math.max(...accumulatedX, ...accumulatedToneX),
+        Math.min(...accumulatedToneX),
+        Math.max(...accumulatedToneX),
       ])
       .range([0, innerWidth]);
 
     const yScale = d3
       .scaleLinear()
       .domain([
-        Math.min(...accumulatedY, ...accumulatedToneY.map(e => e.value)),
-        Math.max(...accumulatedY, ...accumulatedToneY.map(e => e.value)),
+        Math.min(...accumulatedToneY.map(e => e.value)),
+        Math.max(...accumulatedToneY.map(e => e.value)),
       ])
       .nice()
       .range([innerHeight, 0]);
@@ -140,25 +134,6 @@ const LineChart: React.FC<LineChartProps> = ({
         );
     });
 
-    // Dibujar primera línea
-    g.append("path")
-      .datum(accumulatedY)
-      .attr("fill", "none")
-      .attr("stroke", "white")
-      .attr("stroke-width", 1.5)
-      .attr("d", lineGenerator);
-
-
-    // Agregar puntos para la primera línea
-    g.selectAll(".dot")
-      .data(accumulatedY)
-      .enter()
-      .append("circle")
-      .attr("cx", (_, i) => xScale(accumulatedX[i]))
-      .attr("cy", (d) => yScale(d))
-      .attr("r", 3)
-      .attr("fill", "white");
-
     // Agregar puntos para la segunda línea
     g.selectAll(".dot-tone")
       .data(accumulatedToneY)
@@ -170,22 +145,6 @@ const LineChart: React.FC<LineChartProps> = ({
       .attr("fill", "#d95645");
 
     const legend = svg.append("g").attr("transform", `translate(60, 20)`);
-
-    legend
-      .append("rect")
-      .attr("x", 0)
-      .attr("y", 12)
-      .attr("width", 8)
-      .attr("height", 8)
-      .attr("fill", "white");
-
-    legend
-      .append("text")
-      .attr("x", 12)
-      .attr("y", 19)
-      .attr("fill", "white")
-      .attr("font-size", "8px")
-      .text("Respiración");
 
     legend
       .append("rect")
@@ -202,7 +161,7 @@ const LineChart: React.FC<LineChartProps> = ({
       .attr("fill", "#d95645")
       .attr("font-size", "8px")
       .text("Orografía");
-  }, [dataX, dataY, dataToneX, dataToneY, width, height]);
+  }, [dataToneX, dataToneY, width, height]);
 
   return <svg ref={svgRef}></svg>;
 };

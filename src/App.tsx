@@ -51,6 +51,12 @@ const stationOptions = [
   { value: 'invierno', label: 'Invierno', color: '#383a3d' },
 ]
 
+const breathingOptions = [
+  { value: 'Exhalación', label: 'Exhalación', color: '#111', fontColor: '#fff' },
+  { value: 'Apnea', label: 'Apnea', color: '#d95645', fontColor: '#fff' },
+  { value: 'Inhalación', label: 'Inhalación', color: '#fff', fontColor: '#111' },
+]
+
 interface PagesText {
   [key: number]: string;
 }
@@ -109,12 +115,12 @@ const App = () => {
 
 
   const nextPage = () => {
-    if ((metrics[page]?.tone === 0 || metrics[page]?.tone) && (metrics[page]?.breathing === 0 || metrics[page]?.breathing)) {
+    if (metrics[page]?.tone === 0 || metrics[page]?.tone) {
       setPage(prevPage => prevPage + 1)
 
       setError('')
     } else {
-      setError('Debe estar seleccionados para continuar.')
+      setError('Debe estar seleccionado para continuar.')
     }
   }
 
@@ -159,7 +165,6 @@ const App = () => {
   // const tonesChartX = num =>
   //   Array.from({ length: num }, (_, i) => (i / (num - 1)) * 100)
 
-
   const hasFileLoaded = pagesQtty > 0
 
   if (!hasFileLoaded) {
@@ -175,7 +180,6 @@ const App = () => {
 
   const x = [0, ...new Array(pagesQtty).fill(100 / (pagesQtty))]
 
-
   return (
     <div>
       <div className="header">
@@ -190,16 +194,21 @@ const App = () => {
           {
             page > pagesQtty && hasFileLoaded
               ? <div><div id="results">
-                <LineChart dataX={x} dataY={breathingChartY} dataToneX={x} dataToneY={tonesChartY} />
+                <LineChart dataToneX={x} dataToneY={tonesChartY} />
                 <div className="result-list-container">
-                  <div>Sabores</div>
+                  <div>Respiración</div>
                   <div className="result-list">
-                    {Object.values(metrics).map(item => item.taste).map((el) => <span className="result-list-item" style={{ width: 100 / pagesQtty + "%", display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{el}</span>)}
+                    {Object.values(metrics).map(item => item.breathing).map((el) => <span className={"result-list-item " + (100 / pagesQtty < 20 ? 'zoom' : '')} style={{ width: 100 / pagesQtty + "%", backgroundColor: breathingOptions.find(e => e.value === el)?.color, color: breathingOptions.find(e => e.value === el)?.fontColor }}>{el}</span>)}
                   </div>
 
                   <div>Estaciones</div>
                   <div className="result-list">
                     {Object.values(metrics).map(item => item.station).map((el) => <span className={"result-list-item " + (100 / pagesQtty < 20 ? 'zoom' : '')} style={{ width: 100 / pagesQtty + "%", backgroundColor: stationOptions.find(e => e.value === el)?.color }}>{el}</span>)}
+                  </div>
+
+                  <div>Sabores</div>
+                  <div className="result-list">
+                    {Object.values(metrics).map(item => item.taste).map((el) => <span className="result-list-item" style={{ width: 100 / pagesQtty + "%", display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{el}</span>)}
                   </div>
                 </div>
               </div>
@@ -227,11 +236,10 @@ const App = () => {
               <div className="opt-section">
                 <div className="section-title">Respiración</div>
                 <div className="tone-container">
-                  <button className={metrics[page]?.breathing == 1 ? 'selected' : null} onClick={() => setBreathing(1)}>{'Inhalación'}</button>
-                  <button className={metrics[page]?.breathing == 0 ? 'selected' : null} onClick={() => setBreathing(0)}>{'Apnea'}</button>
-                  <button className={metrics[page]?.breathing == -1 ? 'selected' : null} onClick={() => setBreathing(-1)}>{'Exhalación'}</button>
+                  <button className={metrics[page]?.breathing == 'Inhalación' ? 'selected' : null} onClick={() => setBreathing('Inhalación')}>{'Inhalación'}</button>
+                  <button className={metrics[page]?.breathing == 'Apnea' ? 'selected' : null} onClick={() => setBreathing('Apnea')}>{'Apnea'}</button>
+                  <button className={metrics[page]?.breathing == 'Exhalación' ? 'selected' : null} onClick={() => setBreathing('Exhalación')}>{'Exhalación'}</button>
                 </div>
-                <div className="page-error" >{error}</div>
               </div>
 
               <div className="opt-section">
