@@ -13,11 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-*, div {
+div {
    color: white;
 }
 
-.very-red {
+h1 .very-red, .very-red {
   color: #d95645 !important;
 }
 
@@ -180,6 +180,31 @@ body {
   margin-top: 10px;
   margin-bottom: 20px;
   overflow: hidden;
+  padding-bottom: 4px;
+  overflow-x: auto;
+}
+
+/* width */
+.result-list::-webkit-scrollbar {
+  width: 2px;
+  height: 4px;
+  margin: 0 10px;
+}
+
+/* Track */
+.result-list::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+/* Handle */
+.result-list::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 40px;
+}
+
+/* Handle on hover */
+.result-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .result-list-item {
@@ -189,10 +214,8 @@ body {
   border-right: 1px solid white;
   transition: 0.4s all;
   color: white;
-}
-
-.result-list-item.zoom:hover{
-  width: 20% !important;
+  height: 30px;
+  min-width: 150px;
 }
 
 .result-list-item:last-child {
@@ -316,18 +339,4 @@ button:focus-visible,
 .very-button:focus,
 .very-button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button,
-.very-button{
-    background-color: #f9f9f9;
-  }
 }
