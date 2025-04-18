@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
 import Select from 'react-select'
 import LineChart from "./LineChart";
@@ -57,14 +57,39 @@ const breathingOptions = [
   { value: 'Inhalación', label: 'Inhalación', color: '#fff', fontColor: '#111' },
 ]
 
+
+const DEFAULT_METRICS = {};
+const DEFAULT_PAGES_TEXT = {};
+const DEFAULT_PAGE = 1;
+const LOCAL_STORAGE_KEY = 'sinestesiaLiteraria-userProgress';
+
+// Función para cargar el progreso desde el localStorage
+const loadProgress = () => {
+  const savedProgress = localStorage.getItem(LOCAL_STORAGE_KEY);
+  if (savedProgress) {
+    return JSON.parse(savedProgress);
+  }
+  return { page: DEFAULT_PAGE, metrics: DEFAULT_METRICS, pagesText: DEFAULT_PAGES_TEXT };  // Estado por defecto
+};
+
+// Función para guardar el progreso en el localStorage
+const saveProgress = (progress) => {
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(progress));
+};
+
 interface PagesText {
   [key: number]: string;
 }
 
 const App = () => {
-  const [page, setPage] = useState(1)
-  const [pagesText, setPagesText] = useState<PagesText>({});
-  const [metrics, setMetrics] = useState<any>({});
+  const [page, setPage] = useState(loadProgress().page);
+  const [pagesText, setPagesText] = useState<PagesText>(loadProgress().pagesText);
+  const [metrics, setMetrics] = useState<any>(loadProgress().metrics);
+
+  useEffect(() => {
+    // Guardar los cambios en localStorage cada vez que el estado cambie
+    saveProgress({ page, metrics, pagesText });
+  }, [page, metrics, pagesText]);
 
   const extractTextFromPDF = async (file: File) => {
     const fileReader = new FileReader();
@@ -162,6 +187,14 @@ const App = () => {
   const tonesChartY = [0, ...Object.values(metrics).map(item => item.tone)]
 
   const hasFileLoaded = pagesQtty > 0
+  const isInResultPage = page > pagesQtty && hasFileLoaded
+
+  useEffect(() => {
+    if (isInResultPage) {
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
+    }
+  }, [isInResultPage]);
+
 
   if (!hasFileLoaded) {
     return <div>
@@ -199,7 +232,7 @@ const App = () => {
         }
         <div className="page-content" >
           {
-            page > pagesQtty && hasFileLoaded
+            isInResultPage
               ? <div><div id="results">
                 <LineChart dataToneX={x} dataToneY={tonesChartY} />
                 <div className="result-list-container">
@@ -226,7 +259,7 @@ const App = () => {
         </div>
 
         {
-          page > pagesQtty && hasFileLoaded
+          isInResultPage
             ? null
             : <div className="options-container">
               <div className="opt-section">
