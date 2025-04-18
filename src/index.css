@@ -60,6 +60,7 @@ body {
   margin-bottom: 0;
   margin-top: 0;
   background: #111111;
+  justify-content: flex-start;
 }
 
 #results {
@@ -172,6 +173,53 @@ body {
   background: #555;
 }
 
+.initial-text-container {
+  max-width: 800px;
+  margin-bottom: 100px;
+  margin-top: 100px;
+}
+
+@media (max-width: 1024px) {
+  .initial-text-container {
+    max-width: 80%;
+  }
+}
+
+.result-section-title {
+  font-weight: 600;
+}
+
+.index-name {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.index-color {
+  width: 10px;
+  height: 10px;
+  border: 1px solid white;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 20px;
+  margin-right: 5px;
+}
+
+.input-container {
+  padding-bottom: 50px;
+}
+
+.subtitle {
+  font-weight: 600;
+  font-size: 22px;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.recommendation {
+  color: #e4e4e4;
+  text-align: center;
+}
+
 .result-list {
   border: 1px solid white;
   height: 30px;
@@ -180,31 +228,6 @@ body {
   margin-top: 10px;
   margin-bottom: 20px;
   overflow: hidden;
-  padding-bottom: 4px;
-  overflow-x: auto;
-}
-
-/* width */
-.result-list::-webkit-scrollbar {
-  width: 2px;
-  height: 4px;
-  margin: 0 10px;
-}
-
-/* Track */
-.result-list::-webkit-scrollbar-track {
-  background: #111111;
-}
-
-/* Handle */
-.result-list::-webkit-scrollbar-thumb {
-  background: #ffffff;
-  border-radius: 40px;
-}
-
-/* Handle on hover */
-.result-list::-webkit-scrollbar-thumb:hover {
-  background: #555;
 }
 
 .result-list-item {
@@ -215,7 +238,6 @@ body {
   transition: 0.4s all;
   color: white;
   height: 30px;
-  min-width: 150px;
 }
 
 .result-list-item:last-child {

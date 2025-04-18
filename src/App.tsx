@@ -37,11 +37,11 @@ const customStyles = {
 }
 
 const options = [
-  { value: 'acido', label: 'Acido' },
-  { value: 'amargo', label: 'Amargo' },
-  { value: 'dulce', label: 'Dulce' },
-  { value: 'salado', label: 'Salado' },
-  { value: 'picante', label: 'Picante' }
+  { value: 'acido', label: 'Acido', color: '#cafe21' },
+  { value: 'amargo', label: 'Amargo', color: '#492734' },
+  { value: 'dulce', label: 'Dulce', color: '#19e5d6' },
+  { value: 'salado', label: 'Salado', color: '#383a3d' },
+  { value: 'picante', label: 'Picante', color: '#f21e69' }
 ]
 
 const stationOptions = [
@@ -159,11 +159,7 @@ const App = () => {
     link.click()
   }
 
-  const breathingChartY = [0, ...Object.values(metrics).map(item => item.breathing)]
   const tonesChartY = [0, ...Object.values(metrics).map(item => item.tone)]
-
-  // const tonesChartX = num =>
-  //   Array.from({ length: num }, (_, i) => (i / (num - 1)) * 100)
 
   const hasFileLoaded = pagesQtty > 0
 
@@ -173,7 +169,18 @@ const App = () => {
         <h1 className="title">Sinestesia Literaria <span className="very-red"> (Autoedición Lúdica)</span></h1>
       </div>
       <div className="container empty">
-        <input type="file" accept="application/pdf" onChange={handleFileChange2} />
+        <div className="initial-text-container">
+          <div className="subtitle">Destinado a borradores en proceso de construcción, preferentemente sin fotos, sin maquetación final y sin índice. Sólo admite formato pdf.
+          </div>
+
+          <div className="recommendation">
+            Recomendación: subir pdf de hasta 100 páginas. En caso de que el borrador sea más extenso se sugiere subdividirlo en partes "iguales", por ejemplo: si tiene 300 páginas, fraccionarlo en 3 archivos de 100 páginas cada uno; si tiene 150 páginas, en 2 archivos de 75; si tiene 143, dividirlo en un archivo de 72 y otro de 71. Es importante dividir en partes lo más parecidas posibles. Esto permitirá sostener la misma escala en los gráficos resultantes, para analizarlos con mayor comodidad y precisión.
+          </div>
+        </div>
+
+        <div className="input-container">
+          <input type="file" accept="application/pdf" onChange={handleFileChange2} className="input" />
+        </div>
       </div>
     </div>
   }
@@ -196,19 +203,19 @@ const App = () => {
               ? <div><div id="results">
                 <LineChart dataToneX={x} dataToneY={tonesChartY} />
                 <div className="result-list-container">
-                  <div>Respiración</div>
+                  <div className="result-section-title">Respiración <span className="section-index">{breathingOptions.map(el => <span className="index-name"><span className="index-color" style={{ backgroundColor: el.color }}></span>{el.label} </span>)}</span></div>
                   <div className="result-list">
-                    {Object.values(metrics).map(item => item.breathing).map((el) => <span className={"result-list-item " + (100 / pagesQtty < 20 ? 'zoom' : '')} style={{ width: 100 / pagesQtty + "%", backgroundColor: breathingOptions.find(e => e.value === el)?.color, color: breathingOptions.find(e => e.value === el)?.fontColor }}>{el}</span>)}
+                    {Object.values(metrics).map(item => item.breathing).map((el) => <span className={"result-list-item " + (100 / pagesQtty < 20 ? 'zoom' : '')} style={{ width: 100 / pagesQtty + "%", backgroundColor: breathingOptions.find(e => e.value === el)?.color, color: breathingOptions.find(e => e.value === el)?.fontColor }}></span>)}
                   </div>
 
-                  <div>Estaciones</div>
+                  <div className="result-section-title">Estaciones <span className="section-index">{stationOptions.map(el => <span className="index-name"><span className="index-color" style={{ backgroundColor: el.color }}></span>{el.label} </span>)}</span></div>
                   <div className="result-list">
-                    {Object.values(metrics).map(item => item.station).map((el) => <span className={"result-list-item " + (100 / pagesQtty < 20 ? 'zoom' : '')} style={{ width: 100 / pagesQtty + "%", backgroundColor: stationOptions.find(e => e.value === el)?.color }}>{el}</span>)}
+                    {Object.values(metrics).map(item => item.station).map((el) => <span className={"result-list-item " + (100 / pagesQtty < 20 ? 'zoom' : '')} style={{ width: 100 / pagesQtty + "%", backgroundColor: stationOptions.find(e => e.value === el)?.color }}></span>)}
                   </div>
 
-                  <div>Sabores</div>
+                  <div className="result-section-title">Sabores <span className="section-index">{options.map(el => <span className="index-name"><span className="index-color" style={{ backgroundColor: el.color }}></span>{el.label} </span>)}</span></div>
                   <div className="result-list">
-                    {Object.values(metrics).map(item => item.taste).map((el) => <span className="result-list-item" style={{ width: 100 / pagesQtty + "%", display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>{el}</span>)}
+                    {Object.values(metrics).map(item => item.taste).map((el) => <span className={"result-list-item " + (100 / pagesQtty < 20 ? 'zoom' : '')} style={{ width: 100 / pagesQtty + "%", backgroundColor: options.find(e => e.value === el)?.color }}></span>)}
                   </div>
                 </div>
               </div>
