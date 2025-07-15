@@ -156,7 +156,7 @@ const ProspectoToggle = () => {
     },
     {
       question: "Advertencias",
-      answer: "• Solo admite formato pdf.\n • La línea curva de la herramienta Orografía genera un corte en el gráfico (en el libro esto está descripto como Cortocircuito y graficado de otra manera).\n• Destinado a borradores en proceso de construcción. Es decir, a aquellos borradores en ojotas o de entrecasa, crudos en cuanto a su maquetación; materiales preferentemente sin fotos, sin juegos tipográficos, sin índice. En otras palabras, es para borradores con movimiento, aquellos que aún están a varios kilómetros de ripio de tener definido su diseño interior. \n • La WebApp lanza el gráfico solo al terminar la lectura del material subido. En caso de no terminar la lectura, lo hecho quedará guardado y al reingresar se abrirá justo en donde habíamos dejado. Para esto es imprescindible entrar y salir desde el mismo dispositivo. \n• “¿Se puede usar desde cualquier tipo de dispositivo?”:\n Sí, del mismo modo que es posible pero incómodo dormir en el piso. \nSi bien se puede usar desde celulares o tablets, la WebApp, fue ideada para ser utilizada desde computadoras. El motivo es simple y sencillo: mientras mayor sea el tamaño de la pantalla, mayor será el tamaño y la nitidez del gráfico.Por otro lado, dicha nitidez no solo depende del tamaño de la pantalla del dispositivo, sino que además es inversamente proporcional al número de páginas del archivo en cuestión. Quiero decir, mientras mayor sea la cantidad de páginas, más compactado quedará el gráfico. De aquí se desprende la siguiente recomendación:  \nSubir archivos de hasta 100 páginas. \nEn caso de que el borrador sea más extenso se sugiere subdividirlo en partes iguales -o lo más parecidas posible-. Por ejemplo, si tiene 300 páginas, fraccionarlo en 3 archivos de 100; si tiene 150 páginas, en 2 archivos de 75; si posee 143, dividirlo en un archivo de 72 y otro de 71. Esto permitirá sostener la escala en los gráficos resultantes, de manera tal de poder finalmente colocarlos uno al lado del otro, aunándolos en un gráfico que contemple a todo el borrador inicial."
+      answer: "• Solo admite formato pdf.\n • La línea curva de la herramienta Orografía genera un corte en el gráfico (en el libro Sinestesia literaria esto está descripto como Cortocircuito y graficado de otra manera).\n• Destinado a borradores en proceso de construcción escritos en prosa. Es decir, a aquellos borradores en ojotas o de entrecasa, crudos en cuanto a su maquetación; materiales preferentemente sin fotos, sin juegos tipográficos, sin índice. En otras palabras, es para borradores con movimiento, aquellos que aún están a varios kilómetros de ripio de tener definido su diseño interior. \n • La WebApp lanza el gráfico solo al terminar la lectura del material subido. En caso de no terminar la lectura, lo hecho quedará guardado y al reingresar se abrirá justo en donde habíamos dejado. Para esto es imprescindible entrar y salir desde el mismo dispositivo. \n• “¿Se puede usar desde cualquier tipo de dispositivo?”:\n Sí, del mismo modo que es posible pero incómodo dormir en el piso. \nSi bien se puede usar desde celulares o tablets, la WebApp, fue ideada para ser utilizada desde computadoras. El motivo es simple y sencillo: mientras mayor sea el tamaño de la pantalla, mayor será el tamaño y la nitidez del gráfico.Por otro lado, dicha nitidez no solo depende del tamaño de la pantalla del dispositivo, sino que además es inversamente proporcional al número de páginas del archivo en cuestión. Quiero decir, mientras mayor sea la cantidad de páginas, más compactado quedará el gráfico. De aquí se desprende la siguiente recomendación:  \nSubir archivos de hasta 100 páginas. \nEn caso de que el borrador sea más extenso se sugiere subdividirlo en partes iguales -o lo más parecidas posible-. Por ejemplo, si tiene 300 páginas, fraccionarlo en 3 archivos de 100; si tiene 150 páginas, en 2 archivos de 75; si posee 143, dividirlo en un archivo de 72 y otro de 71. Esto permitirá sostener la escala en los gráficos resultantes, de manera tal de poder finalmente colocarlos uno al lado del otro, aunándolos en un gráfico que contemple a todo el borrador inicial."
     },
     {
       question: "Efectos colaterales",
@@ -320,34 +320,50 @@ const App = () => {
           <div className="subtitle">
             Convertí tu borrador en gráfico, para ver lo que a simple vista solemos pasar por alto.
           </div>
-          <ol style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            margin: '1.5em 0 2.5em 0',
-            fontSize: '1.1em',
-            listStyle: 'none',
-            padding: 0,
-            background: "rgb(34,34,34)",
-            borderRadius: "10px",
-            padding: "20px"
-          }}>
+          <ol
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              margin: '1.5em 0 2.5em 0',
+              fontSize: '1.1em',
+              listStyle: 'none',
+              padding: '24px',
+              background: '#222',
+              borderRadius: '16px',
+              gap: '1rem',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
+            }}
+          >
             {[
-              "Subir pdf",
-              "Aplicar herramientas lúdicas",
-              "Descargar gráfico"
+              'Subir pdf',
+              'Aplicar herramientas lúdicas',
+              'Descargar gráfico'
             ].map((text, idx) => (
               <li
                 key={text}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0.7em 0',
+                  justifyContent: 'flex-start',
                   width: '100%',
-                  background: "#111",
-                  borderRadius: "10px",
-                  padding: "10px 0"
+                  maxWidth: 480,
+                  background: '#111',
+                  borderRadius: '12px',
+                  padding: '16px 20px',
+                  color: '#fff',
+                  fontWeight: 500,
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+                  transition: 'background 0.2s ease, transform 0.2s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#1a1a1a'
+                  e.currentTarget.style.transform = 'scale(1.01)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = '#111'
+                  e.currentTarget.style.transform = 'scale(1)'
                 }}
               >
                 <span
@@ -361,19 +377,20 @@ const App = () => {
                     minHeight: 32,
                     borderRadius: '50%',
                     background: '#fff',
-                    color: '#111',
+                    color: '#000',
                     fontWeight: 600,
-                    fontSize: '1.1em',
+                    fontSize: '1em',
                     marginRight: 16,
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.07)'
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.2)'
                   }}
                 >
                   {idx + 1}
                 </span>
-                <span style={{ color: '#fff', fontWeight: 500 }}>{text}</span>
+                {text}
               </li>
             ))}
           </ol>
+
 
 
         </div>
@@ -438,7 +455,7 @@ const App = () => {
             ? null
             : <div className="options-container">
               <div className="opt-section">
-                <div className="section-title">Orografía*</div>
+                <div className="section-title">Orografía</div>
                 <div className="tone-container">
                   <button className={metrics[page]?.tone == 1 ? 'selected' : null} onClick={() => setTone(1)}>{'/'}</button>
                   <button className={metrics[page]?.tone == 0 ? 'selected' : null} onClick={() => setTone(0)}>{'-'}</button>

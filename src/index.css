@@ -370,3 +370,35 @@ button:focus-visible,
   margin-bottom: 20px;
   margin-left: 20px;
 }
+
+
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 1.5em 0 2.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.1rem;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem 1.5rem;
+  background: #1f1f1f;
+  border-radius: 12px;
+  transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  cursor: pointer;
+}
+
+li:hover {
+  background: #2a2a2a;
+  transform: scale(1.01);
+}
