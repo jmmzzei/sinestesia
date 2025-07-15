@@ -139,19 +139,11 @@ const LineChart: React.FC<LineChartProps> = ({
     const legend = svg.append("g").attr("transform", `translate(60, 20)`);
 
     legend
-      .append("rect")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("width", 8)
-      .attr("height", 8)
-      .attr("fill", "#d95645");
-
-    legend
       .append("text")
-      .attr("x", 12)
-      .attr("y", 7)
+      .attr("x", 5)
+      .attr("y", -5)
       .attr("fill", "#d95645")
-      .attr("font-size", "8px")
+      .attr("font-size", "14px")
       .text("Orografía");
   }, [dataToneX, dataToneY, width, height]);
 

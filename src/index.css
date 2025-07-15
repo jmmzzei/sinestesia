@@ -175,7 +175,7 @@ body {
 
 .initial-text-container {
   max-width: 800px;
-  margin-bottom: 100px;
+  margin-bottom: 10px;
   margin-top: 100px;
 }
 
@@ -212,7 +212,7 @@ body {
   font-weight: 600;
   font-size: 22px;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .recommendation {
@@ -361,4 +361,12 @@ button:focus-visible,
 .very-button:focus,
 .very-button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+.faq-item{
+  margin: 10px 0;
+}
+.faq-answer{
+  margin-top: 10px;
+  margin-bottom: 20px;
+  margin-left: 20px;
 }
